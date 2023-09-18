@@ -78,7 +78,7 @@ C---------------------------------------------------------------------C
       ENDIF
       ! check if this and the previous timestep are in the same hour
       L = FLOOR(TimeStep*DTDP/T)
-      Lm = FLOOR((TimeStep-1)*DTDP/T)
+      Lm = FLOOR((TimeStep-1d0)*DTDP/T)
       IF ( L.GT.Lm ) THEN
          ! check if we are >= 49 hours into the run
          IF ( ISTA.GT.NS ) THEN
@@ -120,12 +120,13 @@ C     low-pass filter.
 C---------------------------------------------------------------------C
       IMPLICIT NONE
       REAL(SZ),DIMENSION(25) :: LPwts   ! original weights (one sided)
-      INTEGER :: NS = 49                ! length of HP filter needed
+      INTEGER,PARAMETER      :: NS = 49 ! length of HP filter needed
       REAL(SZ) :: K                     ! for normalizing the LP filter
-      INTEGER :: ii                     ! for loops
+      INTEGER  :: ii                    ! for loops
       !
       ! allocate weights
       ALLOCATE( wts(NS) )
+      wts = 0d0
       ! define low-pass filter weights (not normalized and one-sided)
       LPwts = (/395287,386839,370094,354118,338603,325633,314959,
      &          300054,278167,251492,234033,219260,208050,195518,
