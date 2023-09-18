@@ -539,6 +539,25 @@ C-----------------------------------------------------------------------
          MLD_F(2,:) = tmp
       ENDIF
       DEALLOCATE( tmp )
+#else
+      IF (ABS(IDEN).NE.9) THEN
+         ! BPGX
+         VIDBCPDXOH_F(2,:) = bpgx_g
+         ! BPGY
+         VIDBCPDYOH_F(2,:) = bpgy_g
+         ! SigTS
+         SigTS_F(2,:)      = sigts_g
+      ENDIF
+      IF (LoadIT_Fric) THEN
+         ! NB
+         NB_F(2,:) = nb_g
+         ! NM
+         NM_F(2,:) = nm_g
+      ENDIF
+      IF (NOLIBF.EQ.3) THEN
+         ! MLD
+         MLD_F(2,:) = mld_g
+      ENDIF
 #endif
       IF (MYPROC.EQ.0) THEN
          DEALLOCATE( bpgx_g, bpgy_g, sigts_g )

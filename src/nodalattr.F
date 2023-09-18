@@ -2395,7 +2395,7 @@ C     ----------------------------------------------------------------
       USE GLOBAL, ONLY: CBaroclinic, CORIF, DTDP, NB, NM, IDEN,
      &                  IFSPROTS, RAMP
       USE MESH, ONLY: DRVMAP2DSPVEC, UVECTMP, VVECTMP, RVELF
-      USE INTERNALTIDE, ONLY: UNTIDE, UBar, VBar, MunkHPFilter
+      USE INTERNALTIDE, ONLY: UBar, VBar, MunkHPFilter
       IMPLICIT NONE
       INTEGER, intent(in) :: NP                   ! number of nodes in grid
       REAL(SZ), intent(in), dimension(:) :: TK   ! scalar friction
@@ -2459,7 +2459,6 @@ C              (unnecessary for IT_FricNoOfVals == 1)
          Baroc: IF (CBaroclinic.and.abs(IDEN).ge.5) THEN
 C           2DDI ADCIRC with baroclinic coupling
             if (abs(IDEN).ne.7) then
-               !CALL UNTIDE(U,V,IT)
                CALL MunkHPFilter(U,V,IT)
             endif
             IF (IT_FricNoOfVals == 5) THEN
@@ -2590,7 +2589,7 @@ C     ----------------------------------------------------------------
       SUBROUTINE Apply2DMomentumDisp(UU1, VV1, DP, ETA2,
      &     IFNLFA, NP, TKM)
       USE GLOBAL, ONLY: MLD, DTDP
-      USE INTERNALTIDE, ONLY: UBar, VBar, Eigen_neg_to_pos
+      USE INTERNALTIDE, ONLY: UBar, VBar
 C      USE, INTRINSIC :: IEEE_ARITHMETIC !jgfdebug ieee_is_nan()
       IMPLICIT NONE
       INTEGER, intent(in) :: NP                   ! number of nodes in grid
@@ -2634,7 +2633,6 @@ C        ... Cd as a power function [a(x^b-1)] of x = MLD
          a = TKM(1,I)
          b = TKM(3,I)
          c = TKM(2,I)
-         CALL Eigen_neg_to_pos(a,b,c)
          TKM(1,I) = a
          TKM(3,I) = b
          TKM(2,I) = c

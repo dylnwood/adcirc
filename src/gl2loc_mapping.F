@@ -121,6 +121,7 @@ C----------------------------------------------------------------------
       CALL MPI_GATHERV(local_gl2loc, RECVCOUNT, MPI_INTEGER,
      &                 GL2LOC, SENDCOUNTS, DISPLS, MPI_INTEGER,
      &                 0, COMM, ierr)
+      DEALLOCATE( local_gl2loc )
       RETURN
 #ENDIF
 C----------------------------------------------------------------------
