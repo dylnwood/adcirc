@@ -481,6 +481,7 @@ C-----------------------------------------------------------------------
       use sizes, only : mnproc,myproc, localdir
       use global, only : nodes_lg, np_g
 #ifdef CMPI
+      USE MESSENGER, ONLY: mapToSubdomainRealMPI
       USE GL2LOC_MAPPING, ONLY : MAPTOLOCAL_REAL
 #endif      
       implicit none
@@ -530,7 +531,7 @@ C-----------------------------------------------------------------------
          CALL MAPTOLOCAL_REAL(nb_g,tmp)
          NB_F(2,:) = tmp
          ! NM
-         CALL MAPTOLOCAL_REAL(nb_g,tmp)
+         CALL MAPTOLOCAL_REAL(nm_g,tmp)
          NM_F(2,:) = tmp
       ENDIF
       IF (NOLIBF.EQ.3) THEN
@@ -608,7 +609,7 @@ C-----------------------------------------------------------------------
       character(*),intent(in) :: varname
       integer :: Temp_ID
       real(sz) :: Var(NumNodes)
-
+      var = 0d0
       call Check_err(NF90_INQ_VARID(NC_ID,trim(varname),Temp_ID))
       call Check_err(NF90_GET_VAR(NC_ID,Temp_ID,Var,
      &               start=[1,BCIT_IN],count=[NumNodes,1]))

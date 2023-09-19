@@ -234,8 +234,6 @@ workflows:
                         - adcirc_nws30_wlcorrection
                         - adcirc_nws30_wlcorrection-parallel
                         - adcirc_slopingbeach_vew1d-parallel
-                        - adcirc_baroclinic_2d_serial
-                        - adcirc_baroclinic_2d_parallel
       - test_grib2:
             requires: 
                 - build_cmake_with_netcdf_and_xdmf_grib
@@ -259,6 +257,8 @@ workflows:
                         - adcirc_shinnecock_inlet
                         - adcirc_shinnecock_inlet-parallel
                         - adcirc_timevaryingweirs-parallel
+                        - adcirc_baroclinic_2d_serial
+                        - adcirc_baroclinic_2d_parallel
                         
 
 

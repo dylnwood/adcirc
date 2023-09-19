@@ -50,6 +50,8 @@ C----------------------------------------------------------------------
       ! that has size equal to the maximum number of nodes on a
       ! processor.
 #ifdef CMPI
+      SENDBUF_REAL = 0D0
+      RECVBUF_REAL = 0D0
       IF (MYPROC.EQ.0) THEN
          ! Put global data into sendbufr in the correct order
          DO kk = 1,sum(SENDCOUNTS)
