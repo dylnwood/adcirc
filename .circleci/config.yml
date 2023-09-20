@@ -20,7 +20,7 @@ orbs:
 #...Aliases used to shorthand this job script
 default_env: &default_env
     docker:
-      - image: zcobell/adcirc_ci_development:latest
+      - image: zcobell/adcirc-ci-container:latest
     environment:
       BASH_ENV: /etc/environment
 
