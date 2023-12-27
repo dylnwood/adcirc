@@ -2329,7 +2329,7 @@ Casey 180318: Added NWS=13
 
          ! wet dry control
          if (foundWetDryControlNameList) then
-            WRITE(15,'(a,l,a,l,a,l,a,l,a,i1,a,f15.4,a,l,a,l,a,l,a)')
+            WRITE(15,'(a,l,a,l,a,l,a,l,a,i1,a,f15.4,a,l,a,l,a,l,a,l,a)')
      &         "&wetDryControl outputNodeCode=",outputNodeCode,
      &         " outputNOFF=",outputNOFF," noffActive=",noffActive,
      &         " StatPartWetFix=",StatPartWetFix,

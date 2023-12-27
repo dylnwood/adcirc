@@ -507,7 +507,7 @@ C.... "new" formula for computing vel in wetting/drying routine
       call logMessage(ECHO,trim(scratchMessage))
       write(scratchMessage,'(a,l)') "useHF=",useHF
       call logMessage(ECHO,trim(scratchMessage))
-	  write(scratchMessage,'(a,l)') "TK_averaging=",TK_averaging
+      write(scratchMessage,'(a,l)') "TK_averaging=",TK_averaging
       call logMessage(ECHO,trim(scratchMessage))
 C.... DMW
       rewind(15)
