@@ -2340,7 +2340,7 @@ C....    DMW 202207 Add in options for controlling slope/wind limiting and "new"
      &         " directvelWD=",directvelWD,
      &         " useHF=",useHF,
 C....    DMW 202312 Add in option for controlling TK_averaging in wetting/drying routine
-	 &         " TK_averaging=",TK_averaging," /"
+     &         " TK_averaging=",TK_averaging," /"
 C....    DMW
          endif
          ! jgf52.08.02: inundation output control
