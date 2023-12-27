@@ -144,7 +144,7 @@ CWET...
       use global, only : noff, nodecode, nnodecode, eta1, eta2, tk,
      &    nolifa,
      &    bsx1, bsy1, btime_end, C2DDI, C3D, h0, ifnlfa, nddt, dtdp,
-     &    nibnodecode, ilump, ncchange, tkm, directvelWD, useHF
+     &    nibnodecode, ilump, ncchange, tkm, directvelWD, useHF, TK_averaging
 #ifdef CMPI
      &    ,idumy,dumy1,dumy2
       use messenger
@@ -345,22 +345,24 @@ c. RJW merged 08/26/20008 Casey 071219: Added the following logic to obtain the 
      &                        (1.D0+(HBREAK/H1)**FTHETA)**
      &                        (FGAMMA/FTHETA))), 
      &                     2.0D0/DTDP)
-                           TK_CNT(NM123) = TK_CNT(NM123) + 1
-                           TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
                            !WJP needed for internal_tide stuff
-                           TKM(1:2,NM123) = TK(NM123) 
-                           IF (NM123 .EQ. NM2) THEN
-                              TK(NM1) = TK(NM123)
-                              TK_CNT(NM1) = TK_CNT(NM1) + 1
-                              TK_TMP(NM1) = TK_TMP(NM1) + TK(NM1)
-                              TKM(1:2,NM1) = TK(NM1)
-                           ELSE
-                              TK(NM2) = TK(NM123)
-                              TK_CNT(NM2) = TK_CNT(NM2) + 1
-                              TK_TMP(NM2) = TK_TMP(NM2) + TK(NM2)
-                              TKM(1:2,NM2) = TK(NM2)
+                           TKM(1:2,NM123) = TK(NM123)
+                           IF (TK_averaging) THEN
+                             TK_CNT(NM123) = TK_CNT(NM123) + 1
+                             TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
+                             IF (NM123 .EQ. NM2) THEN
+                               TK(NM1) = TK(NM123)
+                               TK_CNT(NM1) = TK_CNT(NM1) + 1
+                               TK_TMP(NM1) = TK_TMP(NM1) + TK(NM1)
+                               TKM(1:2,NM1) = TK(NM1)
+                             ELSE
+                               TK(NM2) = TK(NM123)
+                               TK_CNT(NM2) = TK_CNT(NM2) + 1
+                               TK_TMP(NM2) = TK_TMP(NM2) + TK(NM2)
+                               TKM(1:2,NM2) = TK(NM2)
+                             ENDIF
                            ENDIF
-                       ELSEIF(C3D)THEN
+                        ELSEIF(C3D)THEN
                            IF(ISLIP.EQ.0)THEN
                               DUDS=(Q(NM123,2)-Q(NM123,1))
      &                           /(SIGMA(2)-SIGMA(1))
@@ -460,22 +462,24 @@ c. RJW merged 08/26/2008 Casey 071219: Added the following logic to obtain the c
      &                        (1.D0+(HBREAK/H1)**FTHETA)**
      &                        (FGAMMA/FTHETA))), 
      &                     2.0D0/DTDP)
-                           TK_CNT(NM123) = TK_CNT(NM123) + 1
-                           TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
                            !WJP needed for internal_tide stuff
                            TKM(1:2,NM123) = TK(NM123) 
-                           IF (NM123 .EQ. NM2) THEN
-                              TK(NM3) = TK(NM123)
-                              TK_CNT(NM3) = TK_CNT(NM3) + 1
-                              TK_TMP(NM3) = TK_TMP(NM3) + TK(NM3)
-                              TKM(1:2,NM3) = TK(NM3)
-                           ELSE
-                              TK(NM2) = TK(NM123)
-                              TK_CNT(NM2) = TK_CNT(NM2) + 1
-                              TK_TMP(NM2) = TK_TMP(NM2) + TK(NM2)
-                              TKM(1:2,NM2) = TK(NM2)
+                           IF (TK_averaging) THEN
+                             TK_CNT(NM123) = TK_CNT(NM123) + 1
+                             TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
+                             IF (NM123 .EQ. NM2) THEN
+                                TK(NM3) = TK(NM123)
+                                TK_CNT(NM3) = TK_CNT(NM3) + 1
+                                TK_TMP(NM3) = TK_TMP(NM3) + TK(NM3)
+                                TKM(1:2,NM3) = TK(NM3)
+                             ELSE
+                                TK(NM2) = TK(NM123)
+                                TK_CNT(NM2) = TK_CNT(NM2) + 1
+                                TK_TMP(NM2) = TK_TMP(NM2) + TK(NM2)
+                                TKM(1:2,NM2) = TK(NM2)
+                             ENDIF
                            ENDIF
-                       ELSEIF(C3D)THEN
+                        ELSEIF(C3D)THEN
                            IF(ISLIP.EQ.0)THEN
                               DUDS=(Q(NM123,2)-Q(NM123,1))
      &                           /(SIGMA(2)-SIGMA(1))
@@ -575,22 +579,24 @@ c. RJW merged 08/26/2008 Casey 071219: Added the following logic to obtain the c
      &                        (1.D0+(HBREAK/H1)**FTHETA)**
      &                        (FGAMMA/FTHETA))), 
      &                     2.0D0/DTDP)
-                           TK_CNT(NM123) = TK_CNT(NM123) + 1
-                           TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
                            !WJP needed for internal_tide stuff
                            TKM(1:2,NM123) = TK(NM123) 
-                           IF (NM123 .EQ. NM1) THEN
-                              TK(NM3) = TK(NM123)
-                              TK_CNT(NM3) = TK_CNT(NM3) + 1
-                              TK_TMP(NM3) = TK_TMP(NM3) + TK(NM3)
-                              TKM(1:2,NM3) = TK(NM3)
-                           ELSE
-                              TK(NM1) = TK(NM123)
-                              TK_CNT(NM1) = TK_CNT(NM1) + 1
-                              TK_TMP(NM1) = TK_TMP(NM1) + TK(NM1)
-                              TKM(1:2,NM1) = TK(NM1)
+                           IF (TK_averaging) THEN
+                             TK_CNT(NM123) = TK_CNT(NM123) + 1
+                             TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
+                             IF (NM123 .EQ. NM1) THEN
+                                TK(NM3) = TK(NM123)
+                                TK_CNT(NM3) = TK_CNT(NM3) + 1
+                                TK_TMP(NM3) = TK_TMP(NM3) + TK(NM3)
+                                TKM(1:2,NM3) = TK(NM3)
+                             ELSE
+                                TK(NM1) = TK(NM123)
+                                TK_CNT(NM1) = TK_CNT(NM1) + 1
+                                TK_TMP(NM1) = TK_TMP(NM1) + TK(NM1)
+                                TKM(1:2,NM1) = TK(NM1)
+                             ENDIF
                            ENDIF
-                       ELSEIF(C3D)THEN
+                        ELSEIF(C3D)THEN
                            IF(ISLIP.EQ.0)THEN
                               DUDS=(Q(NM123,2)-Q(NM123,1))
      &                           /(SIGMA(2)-SIGMA(1))
@@ -639,12 +645,14 @@ CWET...
 C-- DMW 202204 For any node where TK is computed more than once in the above loop,
 C    compute the mean TK and save this value in both the TK and TKM arrays. 
 C    This prevents the value of TK from depending on the ordering of elems. 
-         DO I=1,NP
-            IF (TK_CNT(I) .GT. 1) THEN
-               TK(I) = TK_TMP(I)/DBLE(TK_CNT(I))
-               TKM(1:2,I) = TK(I)            
-            ENDIF
-         ENDDO   
+         IF (TK_averaging) THEN
+           DO I=1,NP
+              IF (TK_CNT(I) .GT. 1) THEN
+                 TK(I) = TK_TMP(I)/DBLE(TK_CNT(I))
+                 TKM(1:2,I) = TK(I)            
+              ENDIF
+           ENDDO  
+         ENDIF       
          if (subdomainOn.and.enforceBN.eq.1) call enforceWDcb() ! NCSU Subdomain
          if (subdomainOn.and.enforceBN.eq.2) call enforceWDob() ! NCSU Subdomain
 
@@ -652,14 +660,16 @@ C     Use Message-Passing to update nnodecode and nibcnt at ghost nodes
 #ifdef CMPI
          CALL UPDATEI(NNODECODE,NIBCNT,2)
 C-- DMW 202204 Update FRIC, TK, and ETA2 at ghost nodes as well 
-         CALL UPDATER(FRIC,TK,ETA2,3)
-         tmp1 = TKM(1,:)
-         tmp2 = TKM(2,:)
-         tmp3 = TKM(3,:)
-         CALL UPDATER(tmp1,tmp2,tmp3,3)
-         TKM(1,:) = tmp1
-         TKM(2,:) = tmp2
-         TKM(3,:) = tmp3 
+         IF (TK_averaging) THEN
+           CALL UPDATER(FRIC,TK,ETA2,3)
+           tmp1 = TKM(1,:)
+           tmp2 = TKM(2,:)
+           tmp3 = TKM(3,:)
+           CALL UPDATER(tmp1,tmp2,tmp3,3)
+           TKM(1,:) = tmp1
+           TKM(2,:) = tmp2
+           TKM(3,:) = tmp3 
+         ENDIF
 C-- DMW
 #endif
 

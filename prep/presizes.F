@@ -115,7 +115,7 @@ Casey 121019: Added multiplication factor to be used before sending winds to cou
       USE CONSTANTS, ONLY: waveWindMultiplier, Ad, Bd, Cs
       USE GLOBAL, ONLY :
      &    USE_TVW,TVW_FILE,NOUT_TVW,TOUTS_TVW,TOUTF_TVW,NSPOOL_TVW,
-     &    outputWindDrag,slim,windlim,directvelWD,useHF
+     &    outputWindDrag,slim,windlim,directvelWD,useHF,TK_averaging
 #if defined CSWAN || defined ADCSWAN
      &   ,SWAN_OutputHS,SWAN_OutputDIR,SWAN_OutputTM01,
      &    SWAN_OutputTPS,SWAN_OutputWIND,SWAN_OutputTM02,

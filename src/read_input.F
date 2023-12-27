@@ -83,7 +83,7 @@ C-----------------------------------------------------------------------
      &   alloc_main6, openfileforread, nhoutonce, IFSPROTS,
      &   StatPartWetFix, How2FixStatPartWet, cgwce_hdp, ifnl_hdp, 
      &   CAliDisp, IFSFM, usingDynamicWaterLevelCorrection,slim,windlim,
-     &   directvelWD,useHF
+     &   directvelWD,useHF,TK_averaging
 #if defined CSWAN || defined ADCSWAN
      &   , SWAN_OutputHS, SWAN_OutputDIR,
      &    SWAN_OutputTM01, SWAN_OutputTPS, SWAN_OutputWIND,
@@ -197,7 +197,7 @@ C
      &  noffActive, StatPartWetFix, How2FixStatPartWet,
 C.... DMW 202207 Add options for controlling slope/wind limiting and
 C.... "new" formula for computing vel in wetting/drying routine
-     &  slim, windlim, directvelWD, useHF
+     &  slim, windlim, directvelWD, useHF, TK_averaging
       NAMELIST /inundationOutputControl/ inundationOutput, inunThresh
 
 C.... DMW
@@ -506,6 +506,8 @@ C.... "new" formula for computing vel in wetting/drying routine
       write(scratchMessage,'(a,l)') "directvelWD=",directvelWD
       call logMessage(ECHO,trim(scratchMessage))
       write(scratchMessage,'(a,l)') "useHF=",useHF
+      call logMessage(ECHO,trim(scratchMessage))
+	  write(scratchMessage,'(a,l)') "TK_averaging=",TK_averaging
       call logMessage(ECHO,trim(scratchMessage))
 C.... DMW
       rewind(15)
