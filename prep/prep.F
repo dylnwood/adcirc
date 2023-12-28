@@ -2339,7 +2339,7 @@ C....    DMW 202207 Add in options for controlling slope/wind limiting and "new"
      &         " windlim=",windlim,
      &         " directvelWD=",directvelWD,
      &         " useHF=",useHF,
-C....    DMW 202312 Add in option for determing TK in wetting/drying routine
+C....    DMW 202312 Add in option for determining TK in wetting/drying routine
      &         " TK_det=",TK_det," /"
 C....    DMW
          endif
