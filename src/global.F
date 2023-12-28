@@ -792,12 +792,13 @@ C     elements to the structure
       ! inundationOutput can be set to .true. in read_input()
       logical :: inundationOutput = .false. 
 C.... DMW 202207 Added controls for slope/wind limiting and for using "new" vel formula in wet/dry routine.
-C.... DMW 202212 Added control for TK_averaging in wet/dry routine.
+C.... DMW 202212 Added control for determining TK in wet/dry routine.
 C....  Set these controls to off by default. (Large value on slim effectively assures limiter is not applied anywhere.)
       real(8) :: slim = 1.d9
       logical :: windlim = .false.
       
-      logical :: directvelWD = .false.,  useHF = .false., TK_averaging = .false.
+      logical :: directvelWD = .false.,  useHF = .false.
+      integer :: TK_det = 0
 C.... DMW
 C
 C     jgf49.44: Log levels, in order from largest amount of log messages
