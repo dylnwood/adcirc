@@ -737,8 +737,10 @@ C    save either the max, min, or mean TK in both the TK and TKM arrays.
 C    This prevents the value of TK from depending on the ordering of elems. 
          IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN
            DO I=1,NP
-             TK(I) = TK_TMP(I)
-             TKM(1:2,I) = TK(I) 
+             IF (TK_CNT(I) .GT. 1) THEN
+               TK(I) = TK_TMP(I)
+               TKM(1:2,I) = TK(I) 
+             ENDIF
            ENDDO
          ELSEIF (TK_det.EQ.3) THEN
            DO I=1,NP
