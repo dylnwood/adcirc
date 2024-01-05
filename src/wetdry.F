@@ -772,16 +772,16 @@ C     Use Message-Passing to update nnodecode and nibcnt at ghost nodes
 #ifdef CMPI
          CALL UPDATEI(NNODECODE,NIBCNT,2)
 C-- DMW 202204 Update FRIC, TK, and ETA2 at ghost nodes as well 
-         IF (TK_det.NE.0) THEN
-           CALL UPDATER(FRIC,TK,ETA2,3)
-           tmp1 = TKM(1,:)
-           tmp2 = TKM(2,:)
-           tmp3 = TKM(3,:)
-           CALL UPDATER(tmp1,tmp2,tmp3,3)
-           TKM(1,:) = tmp1
-           TKM(2,:) = tmp2
-           TKM(3,:) = tmp3 
-         ENDIF
+         !IF (TK_det.NE.0) THEN
+         !  CALL UPDATER(FRIC,TK,ETA2,3)
+         !  tmp1 = TKM(1,:)
+         !  tmp2 = TKM(2,:)
+         !  tmp3 = TKM(3,:)
+         !  CALL UPDATER(tmp1,tmp2,tmp3,3)
+         !  TKM(1,:) = tmp1
+         !  TKM(2,:) = tmp2
+         !  TKM(3,:) = tmp3 
+         !ENDIF
 C-- DMW
 #endif
 
