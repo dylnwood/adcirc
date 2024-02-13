@@ -179,7 +179,6 @@ CWET...
       real(8) :: htot
       real(8) :: h1
       real(8) :: tk_tmp(np),tmp1(np),tmp2(np),tmp3(np)
-      integer :: tk_cnt(np)
       integer :: nbnctot
       integer :: i,j,k,kk,l
       integer :: ie          
@@ -197,7 +196,6 @@ CWET...
 CWET...WET/DRY - INITIALIZATIONS FOR WET/DRY LOOP
 CWET...
          TK_TMP(:) = 0.D0
-         TK_CNT(:) = 0
          IF (directvelWD.AND.useHF) THEN
             TKNF = 100.D0
          ELSE
@@ -354,56 +352,35 @@ C    ....         third node met criteria and is also wet
 c. RJW merged 08/26/20008 Casey 071219: Added the following logic to obtain the correct friction.
                         IF(C2DDI)THEN
 
-                           TK(NM123) = MIN(
+                           TK_TMP(NM123) = MIN(
      &                     FRIC(NM123)*(IFLINBF+(TKNF*VEL/H1)*
      &                        (IFNLBF+IFHYBF*
      &                        (1.D0+(HBREAK/H1)**FTHETA)**
      &                        (FGAMMA/FTHETA))), 
      &                     2.0D0/DTDP)
+                           IF (TK_DET.EQ.1) THEN
+                              TK(NM123) = MAX(TK_TMP(NM123),TK(NM123))
+                           ELSE
+                              TK(NM123) = TK_TMP(NM123)
+                           ENDIF
                            !WJP needed for internal_tide stuff
                            TKM(1:2,NM123) = TK(NM123)
-                           IF (TK_det.NE.0) THEN
-                             TK_CNT(NM123) = TK_CNT(NM123) + 1
-                             IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN ! If TK_det = 1 then take a max of TK, if = 2 then take a min.
-                               IF(TK_CNT(NM123).EQ.1)THEN  !If this is the first time getting TK this timestep,
-                                 TK_TMP(NM123) = TK(NM123) ! then it's ok to overwrite, but save TK just in case.
-                               ELSEIF(TK_det.EQ.1) THEN !If this is not the first time, then take the min/max.
-                                 TK_TMP(NM123) = MAX(TK(NM123),TK_TMP(NM123))
-                               ELSEIF(TK_det.EQ.2) THEN
-                                 TK_TMP(NM123) = MIN(TK(NM123),TK_TMP(NM123))
-                               ENDIF
-                             ELSEIF (TK_det.EQ.3) THEN ! If TK_det = 3 then compute the arithmetic mean of TK.
-                               TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
-                             ENDIF
+                           IF (TK_DET.EQ.1) THEN
                              IF (NM123 .EQ. NM2) THEN
-                               TK(NM1) = TK(NM123)
+                               TK_TMP(NM1) = TK(NM123)
+                               TK(NM1) = MAX(TK_TMP(NM1),TK(NM1))
                                TKM(1:2,NM1) = TK(NM1)
-                               TK_CNT(NM1) = TK_CNT(NM1) + 1
-                               IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN 
-                                 IF(TK_CNT(NM1).EQ.1)THEN  
-                                   TK_TMP(NM1) = TK(NM1) 
-                                 ELSEIF(TK_det.EQ.1) THEN 
-                                   TK_TMP(NM1) = MAX(TK(NM1),TK_TMP(NM1))
-                                 ELSEIF(TK_det.EQ.2) THEN
-                                   TK_TMP(NM1) = MIN(TK(NM1),TK_TMP(NM1))
-                                 ENDIF
-                               ELSEIF (TK_det.EQ.3) then
-                                 TK_TMP(NM1) = TK_TMP(NM1) + TK(NM1)
+                               IF (TK_TMP(NM1).LT.TK(NM1))THEN
+                                 TK(NM123) = TK(NM1)
+                                 TKM(1:2,NM123) = TK(NM123)
                                ENDIF
                              ELSE
-                               TK(NM2) = TK(NM123)
+                               TK_TMP(NM2) = TK(NM123)
+                               TK(NM2) = MAX(TK_TMP(NM2),TK(NM2))
                                TKM(1:2,NM2) = TK(NM2)
-                               TK_CNT(NM2) = TK_CNT(NM2) + 1
-                               IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN 
-                                 IF(TK_CNT(NM2).EQ.1)THEN  
-                                   TK_TMP(NM2) = TK(NM2) 
-                                 ELSEIF(TK_det.EQ.1) THEN 
-                                   TK_TMP(NM2) = MAX(TK(NM2),TK_TMP(NM2))
-                                 ELSEIF(TK_det.EQ.2) THEN
-                                   TK_TMP(NM2) = MIN(TK(NM2),TK_TMP(NM2))
-                                 ENDIF
-                               ELSEIF (TK_det.EQ.3) then
-                                 TK_TMP(NM2) = TK_TMP(NM2) + TK(NM2)
+                               IF (TK_TMP(NM2).LT.TK(NM2))THEN
+                                 TK(NM123) = TK(NM2)
+                                 TKM(1:2,NM123) = TK(NM123)
                                ENDIF
                              ENDIF
                            ENDIF
@@ -500,57 +477,37 @@ C where:  Cd=kappa^2/(ln(z+zo)/z0)^2 is the depth integrated drag coefficient
                      IF(VEL.GT.VELMIN) THEN
                         NNODECODE(NM1)=1
 c. RJW merged 08/26/2008 Casey 071219: Added the following logic to obtain the correct friction.
-                        IF(C2DDI)THEN
-                           TK(NM123) = MIN(
+                        IF(C2DDI)THEN                   
+                        
+                           TK_TMP(NM123) = MIN(
      &                     FRIC(NM123)*(IFLINBF+(TKNF*VEL/H1)*
      &                        (IFNLBF+IFHYBF*
      &                        (1.D0+(HBREAK/H1)**FTHETA)**
      &                        (FGAMMA/FTHETA))), 
      &                     2.0D0/DTDP)
+                           IF (TK_DET.EQ.1) THEN
+                              TK(NM123) = MAX(TK_TMP(NM123),TK(NM123))
+                           ELSE
+                              TK(NM123) = TK_TMP(NM123)
+                           ENDIF
                            !WJP needed for internal_tide stuff
                            TKM(1:2,NM123) = TK(NM123) 
-                           IF (TK_det.NE.0) THEN
-                             TK_CNT(NM123) = TK_CNT(NM123) + 1
-                             IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN ! If TK_det = 1 then take a max of TK, if = 2 then take a min.
-                               IF(TK_CNT(NM123).EQ.1)THEN  !If this is the first time getting TK this timestep,
-                                 TK_TMP(NM123) = TK(NM123) ! then it's ok to overwrite, but save TK just in case.
-                               ELSEIF(TK_det.EQ.1) THEN !If this is not the first time, then take the min/max.
-                                 TK_TMP(NM123) = MAX(TK(NM123),TK_TMP(NM123))
-                               ELSEIF(TK_det.EQ.2) THEN
-                                 TK_TMP(NM123) = MIN(TK(NM123),TK_TMP(NM123))
-                               ENDIF
-                             ELSEIF (TK_det.EQ.3) THEN ! If TK_det = 3 then compute the arithmetic mean of TK.
-                               TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
-                             ENDIF
+                           IF (TK_DET.EQ.1) THEN
                              IF (NM123 .EQ. NM2) THEN
-                               TK(NM3) = TK(NM123)
+                               TK_TMP(NM3) = TK(NM123)
+                               TK(NM3) = MAX(TK_TMP(NM3),TK(NM3))
                                TKM(1:2,NM3) = TK(NM3)
-                               TK_CNT(NM3) = TK_CNT(NM3) + 1
-                               IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN 
-                                 IF(TK_CNT(NM3).EQ.1)THEN  
-                                   TK_TMP(NM3) = TK(NM3) 
-                                 ELSEIF(TK_det.EQ.1) THEN 
-                                   TK_TMP(NM3) = MAX(TK(NM3),TK_TMP(NM3))
-                                 ELSEIF(TK_det.EQ.2) THEN
-                                   TK_TMP(NM3) = MIN(TK(NM3),TK_TMP(NM3))
-                                 ENDIF
-                               ELSEIF (TK_det.EQ.3) then
-                                 TK_TMP(NM3) = TK_TMP(NM3) + TK(NM3)
+                               IF (TK_TMP(NM3).LT.TK(NM3))THEN
+                                 TK(NM123) = TK(NM3)
+                                 TKM(1:2,NM123) = TK(NM123)
                                ENDIF
                              ELSE
-                               TK(NM2) = TK(NM123)
+                               TK_TMP(NM2) = TK(NM123)
+                               TK(NM2) = MAX(TK_TMP(NM2),TK(NM2))
                                TKM(1:2,NM2) = TK(NM2)
-                               TK_CNT(NM2) = TK_CNT(NM2) + 1
-                               IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN 
-                                 IF(TK_CNT(NM2).EQ.1)THEN  
-                                   TK_TMP(NM2) = TK(NM2) 
-                                 ELSEIF(TK_det.EQ.1) THEN 
-                                   TK_TMP(NM2) = MAX(TK(NM2),TK_TMP(NM2))
-                                 ELSEIF(TK_det.EQ.2) THEN
-                                   TK_TMP(NM2) = MIN(TK(NM2),TK_TMP(NM2))
-                                 ENDIF
-                               ELSEIF (TK_det.EQ.3) then
-                                 TK_TMP(NM2) = TK_TMP(NM2) + TK(NM2)
+                               IF (TK_TMP(NM2).LT.TK(NM2))THEN
+                                 TK(NM123) = TK(NM2)
+                                 TKM(1:2,NM123) = TK(NM123)
                                ENDIF
                              ENDIF
                            ENDIF
@@ -647,57 +604,37 @@ C where:  Cd=kappa^2/(ln(z+zo)/z0)^2 is the depth integrated drag coefficient
                      IF(VEL.GT.VELMIN) THEN
                         NNODECODE(NM2)=1
 c. RJW merged 08/26/2008 Casey 071219: Added the following logic to obtain the correct friction.
-                        IF(C2DDI)THEN
-                           TK(NM123) = MIN(
+                        IF(C2DDI)THEN                   
+                        
+                           TK_TMP(NM123) = MIN(
      &                     FRIC(NM123)*(IFLINBF+(TKNF*VEL/H1)*
      &                        (IFNLBF+IFHYBF*
      &                        (1.D0+(HBREAK/H1)**FTHETA)**
      &                        (FGAMMA/FTHETA))), 
      &                     2.0D0/DTDP)
+                           IF (TK_DET.EQ.1) THEN
+                              TK(NM123) = MAX(TK_TMP(NM123),TK(NM123))
+                           ELSE
+                              TK(NM123) = TK_TMP(NM123)
+                           ENDIF
                            !WJP needed for internal_tide stuff
                            TKM(1:2,NM123) = TK(NM123)  
-                           IF (TK_det.NE.0) THEN
-                             TK_CNT(NM123) = TK_CNT(NM123) + 1
-                             IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN ! If TK_det = 1 then take a max of TK, if = 2 then take a min.
-                               IF(TK_CNT(NM123).EQ.1)THEN  !If this is the first time getting TK this timestep,
-                                 TK_TMP(NM123) = TK(NM123) ! then it's ok to overwrite, but save TK just in case.
-                               ELSEIF(TK_det.EQ.1) THEN !If this is not the first time, then take the min/max.
-                                 TK_TMP(NM123) = MAX(TK(NM123),TK_TMP(NM123))
-                               ELSEIF(TK_det.EQ.2) THEN
-                                 TK_TMP(NM123) = MIN(TK(NM123),TK_TMP(NM123))
-                               ENDIF
-                             ELSEIF (TK_det.EQ.3) THEN ! If TK_det = 3 then compute the arithmetic mean of TK.
-                               TK_TMP(NM123) = TK_TMP(NM123) + TK(NM123)
-                             ENDIF
+                           IF (TK_DET.EQ.1) THEN
                              IF (NM123 .EQ. NM1) THEN
-                               TK(NM3) = TK(NM123)
+                               TK_TMP(NM3) = TK(NM123)
+                               TK(NM3) = MAX(TK_TMP(NM3),TK(NM3))
                                TKM(1:2,NM3) = TK(NM3)
-                               TK_CNT(NM3) = TK_CNT(NM3) + 1
-                               IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN 
-                                 IF(TK_CNT(NM3).EQ.1)THEN  
-                                   TK_TMP(NM3) = TK(NM3) 
-                                 ELSEIF(TK_det.EQ.1) THEN 
-                                   TK_TMP(NM3) = MAX(TK(NM3),TK_TMP(NM3))
-                                 ELSEIF(TK_det.EQ.2) THEN
-                                   TK_TMP(NM3) = MIN(TK(NM3),TK_TMP(NM3))
-                                 ENDIF
-                               ELSEIF (TK_det.EQ.3) then
-                                 TK_TMP(NM3) = TK_TMP(NM3) + TK(NM3)
+                               IF (TK_TMP(NM3).LT.TK(NM3))THEN
+                                 TK(NM123) = TK(NM3)
+                                 TKM(1:2,NM123) = TK(NM123)
                                ENDIF
                              ELSE
-                               TK(NM1) = TK(NM123)
+                               TK_TMP(NM1) = TK(NM123)
+                               TK(NM1) = MAX(TK_TMP(NM1),TK(NM1))
                                TKM(1:2,NM1) = TK(NM1)
-                               TK_CNT(NM1) = TK_CNT(NM1) + 1
-                               IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN 
-                                 IF(TK_CNT(NM1).EQ.1)THEN  
-                                   TK_TMP(NM1) = TK(NM1) 
-                                 ELSEIF(TK_det.EQ.1) THEN 
-                                   TK_TMP(NM1) = MAX(TK(NM1),TK_TMP(NM1))
-                                 ELSEIF(TK_det.EQ.2) THEN
-                                   TK_TMP(NM1) = MIN(TK(NM1),TK_TMP(NM1))
-                                 ENDIF
-                               ELSEIF (TK_det.EQ.3) then
-                                 TK_TMP(NM1) = TK_TMP(NM1) + TK(NM1)
+                               IF (TK_TMP(NM1).LT.TK(NM1))THEN
+                                 TK(NM123) = TK(NM1)
+                                 TKM(1:2,NM123) = TK(NM123)
                                ENDIF
                              ENDIF
                            ENDIF
@@ -747,24 +684,7 @@ CWET...
             NIBCNT(NM3) = NIBCNT(NM3) + NBNCTOT
 
          ENDDO
-C-- DMW 202204 For any node where TK is computed more than once in the above loop,
-C    save either the max, min, or mean TK in both the TK and TKM arrays. 
-C    This prevents the value of TK from depending on the ordering of elems. 
-         IF ((TK_det.EQ.1).OR.(TK_det.EQ.2)) THEN
-           DO I=1,NP
-             IF (TK_CNT(I) .GT. 1) THEN
-               TK(I) = TK_TMP(I)
-               TKM(1:2,I) = TK(I) 
-             ENDIF
-           ENDDO
-         ELSEIF (TK_det.EQ.3) THEN
-           DO I=1,NP
-             IF (TK_CNT(I) .GT. 1) THEN
-               TK(I) = TK_TMP(I)/DBLE(TK_CNT(I))
-               TKM(1:2,I) = TK(I)            
-             ENDIF
-           ENDDO  
-         ENDIF       
+    
          if (subdomainOn.and.enforceBN.eq.1) call enforceWDcb() ! NCSU Subdomain
          if (subdomainOn.and.enforceBN.eq.2) call enforceWDob() ! NCSU Subdomain
 
