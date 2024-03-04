@@ -1,40 +1,22 @@
-!-------------------------------------------------------------------------------!
-!
-! ADCIRC - The ADvanced CIRCulation model
-! Copyright (C) 1994-2023 R.A. Luettich, Jr., J.J. Westerink
-! 
-! This program is free software: you can redistribute it and/or modify
-! it under the terms of the GNU Lesser General Public License as published by
-! the Free Software Foundation, either version 3 of the License, or
-! (at your option) any later version.
-! 
-! This program is distributed in the hope that it will be useful,
-! but WITHOUT ANY WARRANTY; without even the implied warranty of
-! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-! GNU General Public License for more details.
-! 
-! You should have received a copy of the GNU Lesser General Public License
-! along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!
-!-------------------------------------------------------------------------------!
       MODULE QUADRATURETRI
       USE SIZES
  
       IMPLICIT NONE
 
+!C     INTEGER, parameter:: SZ = 8
       INTEGER, private:: pcub, ncubs
-      REAL(8), private, pointer:: cub2d(:,:)
-      REAL(8), private, allocatable:: brscub2d(:,:)
-      REAL(8), private, allocatable:: workvec(:)
+      REAL(SZ), private, pointer:: cub2d(:,:)
+      REAL(SZ), private, allocatable:: brscub2d(:,:)
+      REAL(SZ), private, allocatable:: workvec(:)
 
       TYPE MATARR
           INTEGER :: mdim
-          REAL(8), POINTER :: ARRVAL(:,:)
+          REAL(SZ), POINTER :: ARRVAL(:,:)
       END TYPE MATARR
     
       TYPE VECARR
          INTEGER :: mdim
-         REAL(8), POINTER :: VECVAL(:)
+         REAL(SZ), POINTER :: VECVAL(:)
       END TYPE VECARR
 
       CONTAINS
@@ -116,7 +98,7 @@
       SUBROUTINE InterpDefaultCub2D( fxy, fv )
         IMPLICIT NONE
 
-        REAL(8), dimension(:):: fxy, fv
+        REAL(SZ), dimension(:):: fxy, fv
 
         CALL barycentricinterp( fxy, fv, brscub2d, ncubs ) ;
 
@@ -132,7 +114,7 @@
          IMPLICIT NONE
 
          INTEGER:: II, JJ
-         REAL(8):: S(3,3), fv(:)
+         REAL(SZ):: S(3,3), fv(:)
 
          workvec = 0.D0 ;
          CALL InterpDefaultCub2D( workvec, fv ) ;
@@ -156,8 +138,8 @@ C============================================================
         IMPLICIT NONE
 
         INTEGER:: nrs
-        REAL(8), dimension(:):: fxy, fv
-        REAL(8):: brs(:,:)
+        REAL(SZ), dimension(:):: fxy, fv
+        REAL(SZ):: brs(:,:)
 
 
         fxy(1:nrs) = fv(1)*brs(1:nrs,1) + 
@@ -171,7 +153,7 @@ C============================================================
         IMPLICIT NONE
          
         INTEGER:: nrs
-        REAL(8):: brs(:,:), r(:), s(:)
+        REAL(SZ):: brs(:,:), r(:), s(:)
 
         INTEGER:: I
 
@@ -189,11 +171,11 @@ C============================================================
       IMPLICIT NONE
 
       INTEGER:: pcub
-      REAL(8), pointer:: cub2d(:,:)
+      REAL(SZ), pointer:: cub2d(:,:)
 
 
       INTEGER:: p1D, sk, ii, jj, ncub
-      REAL(8), allocatable:: x1D(:,:), x2D(:,:)
+      REAL(SZ), allocatable:: x1D(:,:), x2D(:,:)
 
       SELECT CASE( pcub ) 
       case( 1 )

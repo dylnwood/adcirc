@@ -1,22 +1,3 @@
-!-------------------------------------------------------------------------------!
-!
-! ADCIRC - The ADvanced CIRCulation model
-! Copyright (C) 1994-2023 R.A. Luettich, Jr., J.J. Westerink
-! 
-! This program is free software: you can redistribute it and/or modify
-! it under the terms of the GNU Lesser General Public License as published by
-! the Free Software Foundation, either version 3 of the License, or
-! (at your option) any later version.
-! 
-! This program is distributed in the hope that it will be useful,
-! but WITHOUT ANY WARRANTY; without even the implied warranty of
-! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-! GNU General Public License for more details.
-! 
-! You should have received a copy of the GNU Lesser General Public License
-! along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!
-!-------------------------------------------------------------------------------!
 C******************************************************************************
 C (P)ADCIRC VERSION 45.12 03/17/2006                                          *
 C  last changes in this file VERSION 45.12                                    *
@@ -109,9 +90,9 @@ C*    ADCIRC initialize routine
 C******************************************************************************
       SUBROUTINE ADCIRC_Init(COMM, ROOTD)
       !USE, INTRINSIC :: IEEE_ARITHMETIC !jgfdebug ieee_is_nan()
-      USE VERSION, ONLY : adc_version, adc_hash, fileFmtMajor, fileFmtMinor, 
+      USE VERSION, ONLY : adc_version, fileFmtMajor, fileFmtMinor, 
      &   FileFmtRev
-      USE SIZES, ONLY : rootDir, mnproc, mnwproc, mnallproc, myproc,
+      USE SIZES, ONLY : sz, rootDir, mnproc, mnwproc, mnallproc, myproc,
      &   read_local_hot_start_files, make_dirname, write_local_harm_files,
      &   get_numwriters, mnstae
       USE GLOBAL, ONLY : usingDynamicWaterLevelCorrection,
@@ -123,9 +104,7 @@ C******************************************************************************
      &   version_number, initLogging, setMessageSource, screenMessage,
      &   openLogFile, unsetMessageSource, np_global, rnp_global,
      &   scratchMessage, CTIP, L_N, writer_id
-      USE NodalAttributes, ONLY: activateVEW1DChannelWetPerimeter, 
-     &   initVEW1DChannelWetPerimeter
-      USE ADC_CONSTANTS, ONLY: g, rhowat0
+      USE CONSTANTS, ONLY: g, rhowat0
       USE GLOBAL_3DVS, ONLY : AMB, goRho, goRhoOAMB 
       USE MESH, ONLY : Areas, TotalArea, totalAreaCalc, ne, np, SFEA
       USE GWCE, ONLY : initGWCE
@@ -146,9 +125,9 @@ C******************************************************************************
 C
       INTEGER, OPTIONAL :: COMM
       CHARACTER(*), OPTIONAL :: ROOTD
-      REAL(8) :: StaTimHS
-      REAL(8) :: RefTimHS
-      REAL(8) :: TimeLoc
+      REAL(SZ) :: StaTimHS
+      REAL(SZ) :: RefTimHS
+      REAL(SZ) :: TimeLoc
       INTEGER :: iargc    ! function to return the number of command line arguments
       INTEGER :: argcount ! number of command line arguments
       CHARACTER(2048) :: cmdlinearg ! a single command line argument
@@ -164,15 +143,12 @@ C
          do while (i.lt.argcount)
             i = i + 1
             call getarg(i, cmdlinearg)
-            select case(trim(cmdlinearg))
-            case("-V","-v","--version") 
+            select case(cmdlinearg(1:2))
+            case("-V","-v") 
                ! write the version number string ... actually it is
                ! a series of two or three numbers with two digits 
                ! separated by dots, e.g., 51.02 or 51.52.07
                write(6,'(a)') trim(adc_version)                 
-               CALL EXIT(0) 
-            case("--hash")
-               write(6,'(a)') trim(adc_hash) 
                CALL EXIT(0) 
             case default
                ! do nothing, this is some other command line argument
@@ -231,7 +207,6 @@ C
      &   VERSION_NUMBER(FileFmtMajor, FileFmtMinor, FileFmtRev)
       IF ((NSCREEN.NE.0).AND.(MYPROC.EQ.0)) THEN
          WRITE(ScreenUnit,'(a)')"ADCIRC Version is "//ADC_VERSION
-         WRITE(ScreenUnit,'(a)')"ADCIRC Commit hash is "//ADC_HASH
       ENDIF
 
       !jgf49.44: Allocate memory for reading and writing full domain arrays
@@ -243,11 +218,6 @@ C
       IF ( (MNPROC.gt.1).and.(myProc.eq.0).and.
      &     (WRITE_LOCAL_HARM_FILES.eqv..false.) ) THEN
           CALL allocateFullDomainHAIOArrays()
-      ENDIF
-
-      ! Initialize variables for bottom friction evaluation considering wet perimeter 11/06/2023
-      if ( activateVEW1DChannelWetPerimeter.eqv..true. ) THEN
-            CALL initVEW1DChannelWetPerimeter()
       ENDIF
 
       !jgf49.44: Initialize harmonic analysis parameters.

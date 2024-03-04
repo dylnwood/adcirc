@@ -1,22 +1,3 @@
-!-------------------------------------------------------------------------------!
-!
-! ADCIRC - The ADvanced CIRCulation model
-! Copyright (C) 1994-2023 R.A. Luettich, Jr., J.J. Westerink
-! 
-! This program is free software: you can redistribute it and/or modify
-! it under the terms of the GNU Lesser General Public License as published by
-! the Free Software Foundation, either version 3 of the License, or
-! (at your option) any later version.
-! 
-! This program is distributed in the hope that it will be useful,
-! but WITHOUT ANY WARRANTY; without even the implied warranty of
-! MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-! GNU General Public License for more details.
-! 
-! You should have received a copy of the GNU Lesser General Public License
-! along with this program.  If not, see <http://www.gnu.org/licenses/>.
-!
-!-------------------------------------------------------------------------------!
       !
       !----------------------------------------------------------------
       !----------------------------------------------------------------
@@ -29,14 +10,15 @@
       ! reading/writing for adcirc as well as adcprep in future versions.
       !----------------------------------------------------------------
       module control
+      use sizes, only : sz
       use wind,only: nwlon,nwlat,wlatmax,wlonmin,wlatinc,wloninc
       implicit none
       character(len=80) :: rundes
       character(len=80) :: runid
       integer :: nfover
-      real(8) :: warnElev
+      real(sz) :: warnElev
       integer :: iWarnElevDump
-      real(8) :: warnElevDumpLimit
+      real(sz) :: warnElevDumpLimit
       integer :: nabout
       integer :: nscreen
       integer :: ihot
@@ -55,131 +37,131 @@
       integer :: nrs
       integer :: ncice
       integer :: nramp
-      real(8) :: g
-      real(8) :: tau0
-      real(8) :: tau0FullDomainMin
-      real(8) :: tau0FullDomainMax
+      real(sz) :: g
+      real(sz) :: tau0
+      real(sz) :: tau0FullDomainMin
+      real(sz) :: tau0FullDomainMax
       real(8) :: dtdp
-      real(8) :: statim
-      real(8) :: reftim
-      real(8) :: rstiminc
-      real(8) :: wtiminc
+      real(sz) :: statim
+      real(sz) :: reftim
+      real(sz) :: rstiminc
+      real(sz) :: wtiminc
       integer :: irefyr
       integer :: irefmo
       integer :: irefday
       integer :: irefhr
       integer :: irefmin
       integer :: irefsec
-      real(8) :: refsec
-      real(8) :: cice_timinc
-      real(8) :: pureVortex
-      real(8) :: pureBackground
+      real(sz) :: refsec
+      real(sz) :: cice_timinc
+      real(sz) :: pureVortex
+      real(sz) :: pureBackground
       integer :: stormNumber
-      real(8) :: bladj
-      real(8) :: rnday
-      real(8) :: dramp
-      real(8) :: drampextflux
-      real(8) :: fluxsettlingtime
-      real(8) :: drampintflux
-      real(8) :: drampelev
-      real(8) :: dramptip
-      real(8) :: drampmete
-      real(8) :: drampwrad
-      real(8) :: dunrampmete
-      real(8) :: a00
-      real(8) :: b00
-      real(8) :: c00
-      real(8) :: h0
+      real(sz) :: bladj
+      real(sz) :: rnday
+      real(sz) :: dramp
+      real(sz) :: drampextflux
+      real(sz) :: fluxsettlingtime
+      real(sz) :: drampintflux
+      real(sz) :: drampelev
+      real(sz) :: dramptip
+      real(sz) :: drampmete
+      real(sz) :: drampwrad
+      real(sz) :: dunrampmete
+      real(sz) :: a00
+      real(sz) :: b00
+      real(sz) :: c00
+      real(sz) :: h0
       integer :: nodedrymin
       integer :: nodewetmin
-      real(8) :: velmin
-      real(8) :: tau
-      real(8) :: cf
-      real(8) :: hbreak
-      real(8) :: ftheta
-      real(8) :: fgamma
-      real(8) :: eslm
-      real(8) :: eslc
-      real(8) :: cori
+      real(sz) :: velmin
+      real(sz) :: tau
+      real(sz) :: cf
+      real(sz) :: hbreak
+      real(sz) :: ftheta
+      real(sz) :: fgamma
+      real(sz) :: eslm
+      real(sz) :: eslc
+      real(sz) :: cori
       integer :: ntif
       character(len=5), allocatable :: tipotag(:)
-      real(8), allocatable :: tpk(:)
-      real(8), allocatable :: amigt(:)
-      real(8), allocatable :: etrf(:)
-      real(8), allocatable :: fft(:)
-      real(8), allocatable :: facet(:)
+      real(sz), allocatable :: tpk(:)
+      real(sz), allocatable :: amigt(:)
+      real(sz), allocatable :: etrf(:)
+      real(sz), allocatable :: fft(:)
+      real(sz), allocatable :: facet(:)
       integer :: nbfr
       character(len=5), allocatable :: bountag(:)
-      real(8), allocatable :: amig(:)
-      real(8), allocatable :: ff(:)
-      real(8), allocatable :: face(:)
+      real(sz), allocatable :: amig(:)
+      real(sz), allocatable :: ff(:)
+      real(sz), allocatable :: face(:)
       character(len=10), allocatable :: nbfr_alpha(:)
-      real(8), allocatable :: emo(:,:)
-      real(8), allocatable :: efa(:,:)
-      real(8) :: anginn
+      real(sz), allocatable :: emo(:,:)
+      real(sz), allocatable :: efa(:,:)
+      real(sz) :: anginn
       integer :: nffr
       character(len=5), allocatable :: fbountag(:)
-      real(8), allocatable :: famig(:)
-      real(8), allocatable :: fff(:)
-      real(8), allocatable :: fface(:)
+      real(sz), allocatable :: famig(:)
+      real(sz), allocatable :: fff(:)
+      real(sz), allocatable :: fface(:)
       character(len=10), allocatable :: nffr_alpha(:)
-      real(8), allocatable :: qnam(:,:)
-      real(8), allocatable :: qnph(:,:)
-      real(8), allocatable :: enam(:,:)
-      real(8), allocatable :: enph(:,:)
+      real(sz), allocatable :: qnam(:,:)
+      real(sz), allocatable :: qnph(:,:)
+      real(sz), allocatable :: enam(:,:)
+      real(sz), allocatable :: enph(:,:)
       integer :: noute
-      real(8) :: toutse
-      real(8) :: toutfe
+      real(sz) :: toutse
+      real(sz) :: toutfe
       integer :: nspoole
       integer :: nstae
-      real(8), allocatable :: xel(:)
-      real(8), allocatable :: yel(:)
+      real(sz), allocatable :: xel(:)
+      real(sz), allocatable :: yel(:)
       integer :: noutv
-      real(8) :: toutsv
-      real(8) :: toutfv
+      real(sz) :: toutsv
+      real(sz) :: toutfv
       integer :: nspoolv
       integer :: nstav
-      real(8), allocatable :: xev(:)
-      real(8), allocatable :: yev(:)
+      real(sz), allocatable :: xev(:)
+      real(sz), allocatable :: yev(:)
       integer :: noutc
-      real(8) :: toutsc
-      real(8) :: toutfc
+      real(sz) :: toutsc
+      real(sz) :: toutfc
       integer :: nspoolc
       integer :: nstac
-      real(8), allocatable :: xec(:)
-      real(8), allocatable :: yec(:)
+      real(sz), allocatable :: xec(:)
+      real(sz), allocatable :: yec(:)
       integer :: noutm
-      real(8) :: toutsm
-      real(8) :: toutfm
+      real(sz) :: toutsm
+      real(sz) :: toutfm
       integer :: nspoolm
       integer :: nstam
-      real(8), allocatable :: xem(:)
-      real(8), allocatable :: yem(:)
+      real(sz), allocatable :: xem(:)
+      real(sz), allocatable :: yem(:)
       integer :: noutge
-      real(8) :: toutsge
-      real(8) :: toutfge
+      real(sz) :: toutsge
+      real(sz) :: toutfge
       integer :: nspoolge
       integer :: noutgv
-      real(8) :: toutsgv
-      real(8) :: toutfgv
+      real(sz) :: toutsgv
+      real(sz) :: toutfgv
       integer :: nspoolgv
       integer :: noutgc
-      real(8) :: toutsgc
-      real(8) :: toutfgc
+      real(sz) :: toutsgc
+      real(sz) :: toutfgc
       integer :: nspoolgc
       integer :: noutgw
-      real(8) :: toutsgw
-      real(8) :: toutfgw
+      real(sz) :: toutsgw
+      real(sz) :: toutfgw
       integer :: nspoolgw
       integer :: nfreq
       character(len=10), allocatable :: namefr(:)
-      real(8), allocatable :: hafreq(:)
-      real(8), allocatable :: haff(:)
-      real(8), allocatable :: haface(:)
-      real(8) :: thas
-      real(8) :: thaf
+      real(sz), allocatable :: hafreq(:)
+      real(sz), allocatable :: haff(:)
+      real(sz), allocatable :: haface(:)
+      real(sz) :: thas
+      real(sz) :: thaf
       integer :: nhainc
-      real(8) :: fmv
+      real(sz) :: fmv
       integer :: nhase
       integer :: nhasv
       integer :: nhage
@@ -188,7 +170,7 @@
       integer :: nhsinc
       integer :: ititer
       integer :: isldia
-      real(8) :: convcr
+      real(sz) :: convcr
       integer :: itmax
       character(len=80) :: title
       character(len=80) :: institution
@@ -626,8 +608,8 @@ c     arc add nws13 190110
       subroutine readStations(nsta, stax, stay)
       implicit none
       integer, intent(in) :: nsta
-      real(8), allocatable, intent(out) :: stax(:)
-      real(8), allocatable, intent(out) :: stay(:)
+      real(sz), allocatable, intent(out) :: stax(:)
+      real(sz), allocatable, intent(out) :: stay(:)
       integer :: i
       integer :: ios
       if (nsta.ne.0) then
@@ -1119,8 +1101,8 @@ c     arc add nws13 190110
       subroutine echoStations(nsta, stax, stay, echoUnit)
       implicit none
       integer, intent(in) :: nsta
-      real(8), intent(in) :: stax(:)
-      real(8), intent(in) :: stay(:)
+      real(sz), intent(in) :: stax(:)
+      real(sz), intent(in) :: stay(:)
       integer, intent(in) :: echoUnit ! i/o unit for echoing data
       integer :: i
       if (nsta.ne.0) then
