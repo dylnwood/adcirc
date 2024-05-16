@@ -2365,6 +2365,13 @@ C....    DMW
      &       TideFacUpdateInt," /"
          endif
 
+         if (found_TipInt_Namelist) then
+            write(15,'(a,f15.8,a)')
+     &       '&tipInterpolate tipIntInc=',
+     &       tipIntInc," /"
+         endif
+
+
 C.. v55 - kmd - additions for rainfall
          IF (FOUND_rainCon_NML) THEN
             write(15,rainfallcontrol)
